@@ -20,6 +20,7 @@ export function buildShell(appRoot) {
     </header>
     <main class="shell-body" id="screenRoot"></main>
     <div class="toast-wrap" id="toastWrap"></div>
+    <div class="route-fx" id="routeFx"></div>
   `;
   _coinEl = appRoot.querySelector("#coinVal");
   _displayed = getCoin();

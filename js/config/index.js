@@ -78,11 +78,12 @@ export const ENTRY_TAUNTS = {
    ガチャ（Phase C）
    ============================================================ */
 /** レアリティ: 色/序列/光色（見た目）＋ 確率・重複shard（BALANCE 由来）。 */
+// 色は design.css のレア度トークンと統一（並=白鼠/上=群青/極=金/神話=玉虫）
 export const RARITY = {
-  common: { key: "common", name: "並",   color: "#9b8fa6", rank: 0, light: "#f2efe6", prob: BALANCE.gacha.rarity.common.prob, shard: BALANCE.gacha.rarity.common.shard },
-  rare:   { key: "rare",   name: "上",   color: "#3b7dd8", rank: 1, light: "#5aa6ff", prob: BALANCE.gacha.rarity.rare.prob,   shard: BALANCE.gacha.rarity.rare.shard },
+  common: { key: "common", name: "並",   color: "#c2bcae", rank: 0, light: "#f2efe6", prob: BALANCE.gacha.rarity.common.prob, shard: BALANCE.gacha.rarity.common.shard },
+  rare:   { key: "rare",   name: "上",   color: "#4664cf", rank: 1, light: "#7e98ff", prob: BALANCE.gacha.rarity.rare.prob,   shard: BALANCE.gacha.rarity.rare.shard },
   epic:   { key: "epic",   name: "極",   color: "#e8c372", rank: 2, light: "#ffd76a", prob: BALANCE.gacha.rarity.epic.prob,   shard: BALANCE.gacha.rarity.epic.shard },
-  mythic: { key: "mythic", name: "神話", color: "#ff5edb", rank: 3, light: "#ff8cf0", prob: BALANCE.gacha.rarity.mythic.prob, shard: BALANCE.gacha.rarity.mythic.shard },
+  mythic: { key: "mythic", name: "神話", color: "#b46cff", rank: 3, light: "#d79bff", prob: BALANCE.gacha.rarity.mythic.prob, shard: BALANCE.gacha.rarity.mythic.shard },
 };
 export const RARITY_ORDER = ["common", "rare", "epic", "mythic"];
 

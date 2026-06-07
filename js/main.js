@@ -39,6 +39,7 @@ function boot() {
   const appRoot = document.getElementById("app");
   const shell = buildShell(appRoot);
   _screenRoot = shell.screenRoot;
+  appRoot.dataset.tod = timeOfDay();   // 端末時刻で背景の色味
   mountDevPanel(appRoot);   // DEV_MODE=false なら何もしない
 
   shell.homeBtn.addEventListener("click", () => go("home"));
@@ -83,8 +84,26 @@ export function back() {
   navigate(prev, true);
 }
 
+function timeOfDay() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 10) return "dawn";
+  if (h >= 10 && h < 16) return "day";
+  if (h >= 16 && h < 19) return "dusk";
+  return "night";
+}
+
+/** 画面遷移の統一トランジション（墨ワイプ・transform/opacity のみ） */
+function playRouteFx() {
+  const fx = document.getElementById("routeFx");
+  if (!fx) return;
+  fx.classList.remove("play");
+  void fx.offsetWidth;
+  fx.classList.add("play");
+}
+
 function navigate(route, syncHash) {
   const mod = ROUTES[route] || ROUTES.home;
+  playRouteFx();
   // 前画面を片付け
   if (_current && typeof _current.unmount === "function") {
     try { _current.unmount(); } catch (e) { /* 画面側エラーで全体を止めない */ }

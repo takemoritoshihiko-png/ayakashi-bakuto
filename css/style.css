@@ -2,23 +2,7 @@
    style.css — 共通スタイル＋テーマ変数（和の暗色基調）
    各画面はこの土台（ヘッダ＋本体領域）の上に乗る。
    ============================================================ */
-:root{
-  --bg:        #14101c;
-  --bg-deep:   #0c0814;
-  --panel:     #1f1828;
-  --panel-2:   #2a2036;
-  --ink:       #efe7d8;
-  --ink-dim:   #9b8fa6;
-  --gold:      #e8c372;
-  --red:       #c8384a;
-  --purple:    #8b5cf6;
-  --teal:      #2cc4d4;
-  --line:      #3a2f48;
-  --shadow:    0 12px 30px rgba(0,0,0,.45);
-  --maxw:      480px;
-  --header-h:  56px;
-  --serif: "Hiragino Mincho ProN","Yu Mincho",serif;
-}
+/* デザイントークンは css/design.css に集約（:root）。ここでは参照のみ。 */
 *{ box-sizing:border-box; margin:0; padding:0; }
 html,body{ height:100%; }
 body{
