@@ -10,6 +10,8 @@ import {
   RARITY, RARITY_ORDER, GACHA, MASTER, GACHA_MIKO, EXCHANGE, DEV_MODE,
 } from "../config/index.js";
 import Sfx from "../ui/sfx.js";
+import { renderArt, itemArt } from "../ui/art.js";
+import { buildYokaiArt } from "../game/yokai.js";
 
 /* ===================== 純ロジック ===================== */
 const rank = (r) => RARITY[r].rank;
@@ -215,10 +217,19 @@ function mikoLine(rarity) {
 }
 function typeLabel(t) { return t === "weapon" ? "武器" : t === "costume" ? "衣装" : "妖怪"; }
 
+function cardArt(res) {
+  const it = res.item;
+  if (it.type === "yokai") {
+    return renderArt({ kind: "yokai", id: it.speciesId, rarity: res.rarity,
+      fallback: buildYokaiArt({ speciesId: it.speciesId, level: 1, affection: 0, equip: { weaponUid: null, costumeUid: null } }), alt: it.name });
+  }
+  return itemArt(it, res.rarity);
+}
 function cardFace(res) {
   const R = RARITY[res.rarity];
   const sub = res.dup ? `重複 → ◈+${res.shardGain}` : "NEW";
   return `<div class="card-face r-${res.rarity}" style="--rc:${R.color}">
+    <div class="cf-art">${cardArt(res)}</div>
     <div class="cf-rar">${R.name}</div>
     <div class="cf-name">${res.item.name}</div>
     <div class="cf-type">${typeLabel(res.item.type)}</div>

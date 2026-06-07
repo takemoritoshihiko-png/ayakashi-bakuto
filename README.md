@@ -95,6 +95,35 @@ console.log(m.__migrateSelfTest());   // { ok: true, migrated: {...} }
 - **開発者パネル**: `balance.js` の `DEV_MODE = true` で右下に「DEV」ボタンが出現（`false` で完全に消える）。coin/shard付与・妖怪Lv/愛情度変更・任意species付与・ガチャレアリティ強制・ステージ解放・放置N時間シミュレート・セーブ入出力(JSON)/リセット。
 - **経済シミュレータ**（パネル内・読取専用）: 博打1回の期待coin、想定 coin/時、ガチャ10連や修行・家具が「博打◯分相当」かを試算し、破綻（赤字や安すぎ）を数字で発見できる。
 
+## 画像アセット（Phase J）
+
+画像は外部（画像生成AI）で用意し `assets/` に置く。**画像が無くても既存SVG/絵文字で動作**し、足すほど自動で差し替わる。絵柄方針: レア度で「可愛い→妖しく」。
+
+### フォルダ構成・命名規約
+
+```
+assets/
+  yokai/{speciesId}.webp                 妖怪ベース
+  yokai/{speciesId}__{costumeId}.webp    衣装差分（任意）
+  weapons/{itemId}.webp
+  costumes/{itemId}.webp                 装備アイコン
+  enemies/{enemyId}.webp
+  furniture/{furnitureId}.webp
+```
+
+### 推奨サイズ／形式
+- 妖怪・敵: **512×512 透過 WebP**（正方形・余白少なめ・中央寄せ）
+- 装備（武器/衣装）・家具: **256×256 透過 WebP**
+- 透過必須。背景は付けない（額縁はアプリ側がレア度で付与）。
+
+### 反映手順
+1. 上記の名前で画像を `assets/<種別>/` に置く。
+2. `js/config/assets.js` の `AVAILABLE` に「拡張子なしのキー」を追加（例: `yokai: new Set(["kyuubi","kyuubi__cos_juni"])`）。
+3. 解決順は **衣装差分 → ベース → null**（null は SVG フォールバック）。`<img>` の onerror でも自動でフォールバックするので登録漏れでも壊れない。
+4. dev パネルの「アセットチェッカー」でカバレッジ／不足が一覧できる。
+
+レア度の額縁/オーラ（並=白鼠/上=群青/極=金/神話=玉虫）は全画面の画像に自動適用され、画像のばらつきを吸収する。
+
 ## 開発メモ
 
 - バニラ JS / ビルド不要。各画面は `{ mount(root, ctx), unmount() }` を export。

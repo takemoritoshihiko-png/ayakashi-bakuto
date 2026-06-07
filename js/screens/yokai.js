@@ -7,10 +7,11 @@ import { RARITY, ELEMENTS, GAME, MASTER } from "../config/index.js";
 import {
   speciesById, getEffectiveStats, skillsOf, expToNext, train, trainCost,
   equip, resolveEquip, affectionStage, affectionStageName, unlockedVoices,
-  unlockedLore, inParty, toggleParty, buildYokaiArt, itemMaster, elementColor,
+  unlockedLore, inParty, toggleParty, buildYokaiArt, yokaiImageArt, itemMaster, elementColor,
 } from "../game/yokai.js";
 import { toast } from "../ui/shell.js";
 import Sfx from "../ui/sfx.js";
+import { itemArt } from "../ui/art.js";
 
 let _root = null, _ctx = null, _view = "list";
 
@@ -71,7 +72,7 @@ function card(inst) {
   const R = RARITY[sp.rarity];
   const eff = getEffectiveStats(inst);
   return `<button class="yk-card" data-uid="${inst.uid}" style="--rc:${R.color};--ec:${elementColor(sp.element)}">
-    <div class="ykc-art">${buildYokaiArt(inst)}</div>
+    <div class="ykc-art">${yokaiImageArt(inst, { rarity: sp.rarity })}</div>
     <div class="ykc-name">${sp.name}</div>
     <div class="ykc-meta"><span class="ykc-el">${sp.element}</span><span class="ykc-lv">Lv${inst.level}</span></div>
     <div class="ykc-rar">${R.name}</div>
@@ -116,7 +117,7 @@ function renderDetail(uid) {
       </div>
 
       <div class="d-hero">
-        <div class="d-art">${buildYokaiArt(inst)}</div>
+        <div class="d-art">${yokaiImageArt(inst, { rarity: sp.rarity })}</div>
         <div class="d-head">
           <div class="d-name">${sp.name}</div>
           <div class="d-tags"><span class="d-rar">${R.name}</span><span class="d-el">${sp.element}属性</span></div>
@@ -180,7 +181,7 @@ function effLabel(effect) {
   return {
     buff_atk: "攻UP", buff_def: "防UP", buff_spd: "速UP",
     debuff_atk: "敵攻DOWN", debuff_def: "敵防DOWN", debuff_spd: "敵速DOWN",
-    heal: "回復", aoe: "全体", drain: "吸収", none: "—",
+    heal: "回復", aoe: "全体", drain: "吸収", poison: "毒", paralyze: "麻痺", none: "—",
   }[effect] || "—";
 }
 function modStr(mods) {
@@ -219,6 +220,7 @@ function openPicker(inst, slot) {
     const onSelf = it.uid === equippedUid;
     const onOther = s.yokai.find((y) => y.uid !== inst.uid && (y.equip.weaponUid === it.uid || y.equip.costumeUid === it.uid));
     return `<button class="pick-row ${onSelf ? "sel" : ""}" data-pick="${it.uid}" style="--rc:${R.color}">
+      <span class="pick-ico">${itemArt(m, m.rarity)}</span>
       <span class="pick-rar">${R.name}</span>
       <span class="pick-name">${m.name}</span>
       <span class="pick-mods">${modStr(m.statMods)}${m.affectionBonus ? " ♥+" + m.affectionBonus : ""}</span>
@@ -272,7 +274,7 @@ function partyCard(inst) {
   const R = RARITY[sp.rarity];
   const on = inParty(inst.uid);
   return `<button class="yk-card ${on ? "psel" : ""}" data-puid="${inst.uid}" style="--rc:${R.color};--ec:${elementColor(sp.element)}">
-    <div class="ykc-art">${buildYokaiArt(inst)}</div>
+    <div class="ykc-art">${yokaiImageArt(inst, { rarity: sp.rarity })}</div>
     <div class="ykc-name">${sp.name}</div>
     <div class="ykc-meta"><span class="ykc-el">${sp.element}</span><span class="ykc-lv">Lv${inst.level}</span></div>
     ${on ? `<span class="ykc-party">出撃中</span>` : ""}

@@ -8,7 +8,7 @@ import {
 } from "../config/index.js";
 import {
   speciesById, getEffectiveStats, skillsOf, addExp, gainAffection,
-  buildYokaiArt, elementColor,
+  buildYokaiArt, elementColor, resolveEquip,
 } from "./yokai.js";
 
 /* ---- 属性相性 ---- */
@@ -34,6 +34,7 @@ function basicSkill(element) { return { id: "attack", name: "攻撃", power: BAT
 export function makeAlly(inst) {
   const sp = speciesById(inst.speciesId);
   const stats = getEffectiveStats(inst);
+  const cos = resolveEquip(inst).costumeItem;
   return {
     side: "ally", refUid: inst.uid, speciesId: inst.speciesId,
     name: sp.name, element: sp.element,
@@ -42,6 +43,7 @@ export function makeAlly(inst) {
     skills: [basicSkill(sp.element), ...skillsOf(inst).map(withCost)],
     statuses: [], alive: true, _defending: false,
     artHtml: buildYokaiArt(inst), color: elementColor(sp.element),
+    imgKind: "yokai", imgId: inst.speciesId, costumeId: cos ? cos.id : null, rarity: sp.rarity,
   };
 }
 export function makeEnemy(enemyId) {
@@ -56,6 +58,7 @@ export function makeEnemy(enemyId) {
     skills: [basicSkill(e.element), ...e.skills.map(withCost)],
     statuses: [], alive: true, _defending: false, isBoss: !!e.isBoss,
     artHtml: buildEnemyArt(e), color: elementColor(e.element),
+    imgKind: "enemy", imgId: enemyId, rarity: e.isBoss ? "epic" : null,
   };
 }
 
@@ -81,7 +84,7 @@ export function computeDamage(attacker, defender, skill) {
   const atk = getStat(attacker, "atk");
   const def = getStat(defender, "def");
   const mult = elementMult(skill.element, defender.element);
-  const crit = Math.random() < BATTLE.critChance;
+  const crit = Math.random() < (BATTLE.critChance + (skill.critBonus || 0));  // 技ごとのクリ補正
   const variance = BATTLE.varianceMin + Math.random() * (BATTLE.varianceMax - BATTLE.varianceMin);
   let dmg = skill.power * (atk / def) * mult * (crit ? BATTLE.critMult : 1) * variance;
   if (defender._defending) dmg *= BATTLE.defendMult;
@@ -103,7 +106,7 @@ export function performSkill(actor, skill, primaryTarget, opposing) {
     } else if (skill.effect.startsWith("buff")) {
       addStatus(actor, skill.effect, 3);
       events.push({ type: "buff", target: actor, effect: skill.effect });
-    } else if (skill.effect.startsWith("debuff") || skill.effect === "poison") {
+    } else if (skill.effect.startsWith("debuff") || skill.effect === "poison" || skill.effect === "paralyze") {
       if (primaryTarget && primaryTarget.alive) {
         addStatus(primaryTarget, skill.effect, 3);
         events.push({ type: "status", target: primaryTarget, effect: skill.effect });
@@ -122,7 +125,7 @@ export function performSkill(actor, skill, primaryTarget, opposing) {
     total += dmg;
     if (t.hp === 0) t.alive = false;
     events.push({ type: "damage", target: t, dmg, crit, mult });
-    if (t.alive && (skill.effect.startsWith("debuff") || skill.effect === "poison")) {
+    if (t.alive && (skill.effect.startsWith("debuff") || skill.effect === "poison" || skill.effect === "paralyze")) {
       addStatus(t, skill.effect, 3);
       events.push({ type: "status", target: t, effect: skill.effect });
     }

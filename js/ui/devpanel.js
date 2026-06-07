@@ -9,6 +9,7 @@ import {
   DEV_MODE, BALANCE, YOKAI_SPECIES, STAGES, FURNITURE, GACHA, RARITY, RARITY_ORDER, GAME,
 } from "../config/index.js";
 import { recomputeComfort, applyIdleAffection } from "../game/room.js";
+import { coverage } from "../config/assets.js";
 
 export function mountDevPanel(appRoot) {
   if (!DEV_MODE) return;   // ★公開時は完全に消える
@@ -79,11 +80,17 @@ function renderPanel(panel) {
         <b>経済シミュレータ（読取専用）</b>
         <div id="dvSim" class="dev-out"></div>
       </div>
+
+      <div class="dev-sec">
+        <b>アセットチェッカー</b>（画像カバレッジ／不足）
+        <div id="dvAssets" class="dev-out"></div>
+      </div>
     </div>`;
 
   panel.querySelector("#devClose").addEventListener("click", () => panel.classList.add("hidden"));
   panel.querySelectorAll("[data-act]").forEach((b) => b.addEventListener("click", () => onAct(b.dataset.act, panel)));
   renderSim(panel.querySelector("#dvSim"));
+  renderAssets(panel.querySelector("#dvAssets"));
 }
 
 function speciesName(id) { const sp = YOKAI_SPECIES.find((x) => x.speciesId === id); return sp ? sp.name : id; }
@@ -143,6 +150,19 @@ function onAct(act, panel) {
 /* ============================================================
    経済シミュレータ — 勘を数字にする（読み取り専用）
    ============================================================ */
+function renderAssets(el) {
+  const cov = coverage();
+  const totalHave = cov.reduce((a, c) => a + c.have, 0);
+  const totalAll = cov.reduce((a, c) => a + c.total, 0);
+  const rows = cov.map((c) => {
+    const pct = c.total ? Math.round((c.have / c.total) * 100) : 0;
+    const miss = c.missing.length ? `<div class="asset-miss">不足: ${c.missing.slice(0, 8).join(", ")}${c.missing.length > 8 ? " …他" + (c.missing.length - 8) : ""}</div>` : `<div class="asset-ok">✓ 完備</div>`;
+    return `<div class="asset-row"><b>${c.label}</b> <span>${c.have}/${c.total}（${pct}%）</span>${miss}</div>`;
+  }).join("");
+  el.innerHTML = `<div class="asset-total">合計 ${totalHave}/${totalAll}（${totalAll ? Math.round(totalHave / totalAll * 100) : 0}%）</div>${rows}
+    <div class="sim-note">assets/ に画像を置き、js/config/assets.js の AVAILABLE に登録すると反映されます。</div>`;
+}
+
 function gambleBalancedDepth(casino) {
   // 累積生存率が 50% を割る直前の深さで撤退する前提の概算
   const { bustStep, bustCap, mulBase } = BALANCE.gamble;

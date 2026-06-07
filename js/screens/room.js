@@ -8,7 +8,8 @@ import {
   place, moveTo, rotate, removeAt, recomputeComfort, themeProgress,
   toggleDisplayed, isDisplayed,
 } from "../game/room.js";
-import { speciesById, buildYokaiArt } from "../game/yokai.js";
+import { speciesById, buildYokaiArt, yokaiImageArt } from "../game/yokai.js";
+import { furnitureArt } from "../ui/art.js";
 import { toast } from "../ui/shell.js";
 
 let _root = null, _ctx = null;
@@ -87,7 +88,7 @@ function placedHtml(p, i) {
   const sel = i === _selPlaced ? " sel" : "";
   return `<div class="furn${sel}" data-idx="${i}"
     style="left:${p.x * _cell}px;top:${p.y * _cell}px;width:${fp.w * _cell}px;height:${fp.h * _cell}px;font-size:${Math.min(fp.w, fp.h) * _cell * 0.6}px;">
-    <span class="furn-art">${f.art}</span></div>`;
+    <span class="furn-art">${furnitureArt(f)}</span></div>`;
 }
 
 function wireGrid() {
@@ -194,7 +195,7 @@ function openDisplayPicker() {
     const sp = speciesById(inst.speciesId);
     const on = isDisplayed(inst.uid);
     return `<button class="disp-row ${on ? "on" : ""}" data-disp="${inst.uid}">
-      <span class="disp-art">${buildYokaiArt(inst)}</span>
+      <span class="disp-art">${yokaiImageArt(inst)}</span>
       <span class="disp-name">${sp.name} <small>Lv${inst.level} ♥${inst.affection}</small></span>
       <span class="disp-tog">${on ? "出す中" : "出す"}</span>
     </button>`;
@@ -222,7 +223,7 @@ function startWalk() {
   const insts = s.room.displayed.map((u) => s.yokai.find((y) => y.uid === u)).filter(Boolean);
   layer.innerHTML = insts.map((inst, i) =>
     `<div class="room-yokai" id="ry${i}" style="left:${(2 + i * 2) * _cell}px;top:${(ROOM.rows - 2) * _cell}px;width:${_cell * 1.4}px;height:${_cell * 1.4}px;">
-       <div class="ry-bubble" id="ryb${i}"></div>${buildYokaiArt(inst)}
+       <div class="ry-bubble" id="ryb${i}"></div>${yokaiImageArt(inst)}
      </div>`).join("");
   if (!insts.length) return;
 

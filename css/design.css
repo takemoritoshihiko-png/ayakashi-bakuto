@@ -291,7 +291,50 @@ h1, h2, h3,
 .home-foot { text-align: center; font-size: var(--fs-tiny); color: var(--ink-dim); letter-spacing: .2em; }
 .dev-tools { display: flex; gap: var(--sp-3); flex-wrap: wrap; justify-content: center; }
 
+/* ============================================================
+   画像アセット枠（Phase J）— 画像優先・SVG/絵文字フォールバック・レア度額縁
+   ============================================================ */
+.art-frame {
+  position: relative; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-sm); overflow: hidden;
+}
+.art-img { width: 100%; height: 100%; object-fit: contain; display: block; animation: artFade var(--t-mid) var(--ease); }
+@keyframes artFade { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: none; } }
+.art-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.art-fallback .yk-svg { width: 100%; height: 100%; }
+.art-emoji { font-size: 1em; line-height: 1; }
+
+/* レア度の額縁／オーラ（画像のバラつきを吸収して常にレア感） */
+.art-frame.rar-common { box-shadow: inset 0 0 0 1px var(--rarity-common); }
+.art-frame.rar-rare   { box-shadow: inset 0 0 0 2px var(--rarity-rare),   0 0 8px color-mix(in srgb, var(--rarity-rare) 40%, transparent); }
+.art-frame.rar-epic   { box-shadow: inset 0 0 0 2px var(--rarity-epic),   0 0 12px color-mix(in srgb, var(--rarity-epic) 55%, transparent); }
+.art-frame.rar-mythic { box-shadow: inset 0 0 0 2px var(--rarity-mythic), 0 0 16px color-mix(in srgb, var(--rarity-mythic) 65%, transparent); }
+/* 神話＝玉虫の虹の縁（マスクで枠のみ・静的・軽量） */
+.art-frame.rar-mythic::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none; opacity: .8;
+  background: var(--rarity-mythic-grad);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+
+/* 各設置先での絵文字フォールバックのサイズ調整（画像未投入時も自然に） */
+.zk-art { font-size: 34px; }
+.cf-art { width: 92px; height: 92px; margin: 0 auto 6px; font-size: 44px; }
+.zd-art { font-size: 60px; }
+.disp-art { font-size: 26px; }
+.pick-ico { display: inline-flex; width: 30px; height: 30px; font-size: 22px; flex: 0 0 auto; }
+.furn .art-frame { width: 100%; height: 100%; }
+
+/* dev アセットチェッカー */
+.asset-total { font-size: var(--fs-small); color: var(--c-kin); font-weight: 700; margin-bottom: 6px; }
+.asset-row { font-size: var(--fs-small); padding: 4px 0; border-top: 1px solid var(--line-soft); }
+.asset-row b { color: var(--c-teal); }
+.asset-miss { font-size: var(--fs-tiny); color: var(--ink-dim); }
+.asset-ok { font-size: var(--fs-tiny); color: var(--c-koke); }
+.pick-ico .art-frame { width: 30px; height: 30px; }
+
 @media (prefers-reduced-motion: reduce) {
   #app::before, .bar-fill, .pity-fill { transition: none; }
-  .route-fx.play, .ct-lantern { animation: none; }
+  .route-fx.play, .ct-lantern, .art-img { animation: none; }
 }

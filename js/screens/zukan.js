@@ -9,6 +9,15 @@ import {
 import { affectionStageName } from "../game/yokai.js";
 import { toast } from "../ui/shell.js";
 import Sfx from "../ui/sfx.js";
+import { renderArt } from "../ui/art.js";
+
+/* 図鑑エントリの絵（画像優先・無ければ既存SVG/絵文字フォールバック・額縁つき） */
+function zkArt(cat, e, cls) {
+  if (cat === "yokai") return renderArt({ kind: "yokai", id: e.id, rarity: e.rarity, fallback: e.artHtml || "", alt: e.name, cls });
+  if (cat === "weapon" || cat === "costume") return renderArt({ kind: cat, id: e.id, rarity: e.rarity, fallback: `<span class="art-emoji">${e.emoji || "❖"}</span>`, alt: e.name, cls });
+  if (cat === "furniture") return renderArt({ kind: "furniture", id: e.id, fallback: `<span class="art-emoji">${e.emoji || "❖"}</span>`, alt: e.name, cls });
+  return `<div class="art-frame"><span class="art-emoji">${e.emoji || "❖"}</span></div>`;
+}
 
 let _root = null, _ctx = null, _cat = "yokai";
 
@@ -66,7 +75,7 @@ function entryCard(e) {
   if (!e.discovered) {
     return `<div class="zk-card undiscovered"><div class="zk-art">？</div><div class="zk-name">???</div></div>`;
   }
-  const art = e.artHtml ? `<div class="zk-art svg">${e.artHtml}</div>` : `<div class="zk-art emoji">${e.emoji || "❖"}</div>`;
+  const art = `<div class="zk-art">${zkArt(_cat, e)}</div>`;
   return `<button class="zk-card" data-entry="${_cat}:${e.id}" style="--rc:${e.color}">
     ${art}<div class="zk-name">${e.name}</div>
     <div class="zk-rar">${RARITY[e.rarity] ? RARITY[e.rarity].name : ""}</div>
@@ -78,7 +87,7 @@ function openDetail(key) {
   const e = entriesOf(cat).find((x) => x.id === id);
   if (!e || !e.discovered) return;
   const ov = _root.querySelector("#zkOverlay");
-  const art = e.artHtml ? `<div class="zd-art">${e.artHtml}</div>` : `<div class="zd-art emoji">${e.emoji || "❖"}</div>`;
+  const art = `<div class="zd-art">${zkArt(cat, e)}</div>`;
   let body = `<p class="zd-desc">${e.desc || ""}</p>`;
   if (cat === "yokai") {
     body += `<div class="zd-aff">愛情：${e.affection}（${affectionStageName(e.affection)}）— 記述は懐くほど深まる</div>`;

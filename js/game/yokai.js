@@ -5,6 +5,7 @@
    ============================================================ */
 import { getState, saveSave, addCoin, getCoin } from "../state.js";
 import { YOKAI_SPECIES, MASTER, GAME, ELEMENTS, RARITY } from "../config/index.js";
+import { renderArt } from "../ui/art.js";
 
 /* ---- 参照 ---- */
 export function speciesById(id) { return YOKAI_SPECIES.find((s) => s.speciesId === id); }
@@ -105,13 +106,13 @@ export function affectionStageName(affection) {
 export function unlockedVoices(inst) {
   const sp = speciesById(inst.speciesId);
   if (!sp) return [];
-  return sp.voices.slice(0, affectionStage(inst.affection) + 1);
+  return (sp.voiceLines || sp.voices || []).slice(0, affectionStage(inst.affection) + 1);
 }
 /** 愛情段階で深まる図鑑記述（index 0..stage）。 */
 export function unlockedLore(inst) {
   const sp = speciesById(inst.speciesId);
   if (!sp) return [];
-  return sp.lore.slice(0, affectionStage(inst.affection) + 1);
+  return (sp.lore || []).slice(0, affectionStage(inst.affection) + 1);
 }
 
 /* ============================================================
@@ -159,15 +160,28 @@ export function toggleParty(uid) {
 /* ============================================================
    描画（画像不使用・SVG）。属性で色味、衣装(appearance)で見た目変化。
    ============================================================ */
+/** 画像優先・無ければ procedural SVG の妖怪アート（額縁つき）。全画面で使用。 */
+export function yokaiImageArt(inst, opts = {}) {
+  const sp = speciesById(inst.speciesId);
+  const cos = resolveEquip(inst).costumeItem;
+  return renderArt({
+    kind: "yokai", id: inst.speciesId, costumeId: cos ? cos.id : null,
+    rarity: opts.rarity || (sp && sp.rarity), fallback: buildYokaiArt(inst), alt: sp && sp.name,
+  });
+}
+
 export function buildYokaiArt(inst) {
   const sp = speciesById(inst.speciesId);
   if (!sp) return "";
   const col = elementColor(sp.element);
   const { appearance } = resolveEquip(inst);
-  const body = FORM[sp.form] ? FORM[sp.form](col) : FORM._default(col);
+  const form = sp.form || "_default";
+  const gid = `g_${form}_${sp.speciesId}`;             // 種別ごとに一意（同フォーム流用でも衝突しない）
+  let body = (FORM[form] || FORM._default)(col);
+  body = body.split(`url(#g_${form})`).join(`url(#${gid})`);
   const cos = appearance && COSTUME[appearance] ? COSTUME[appearance]() : "";
   return `<svg viewBox="0 0 120 120" class="yk-svg">
-    <defs><radialGradient id="g_${sp.form}" cx="40%" cy="35%" r="70%">
+    <defs><radialGradient id="${gid}" cx="40%" cy="35%" r="70%">
       <stop offset="0%" stop-color="#fff" stop-opacity=".25"/><stop offset="55%" stop-color="${col}"/><stop offset="100%" stop-color="${shade(col)}"/>
     </radialGradient></defs>
     ${body}${cos}</svg>`;

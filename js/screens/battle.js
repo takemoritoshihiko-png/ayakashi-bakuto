@@ -10,6 +10,7 @@ import {
 } from "../game/battle.js";
 import { toast } from "../ui/shell.js";
 import Sfx from "../ui/sfx.js";
+import { renderArt } from "../ui/art.js";
 
 let _root = null, _ctx = null, _view = "select";
 let _timers = [], _alive = true;
@@ -93,7 +94,7 @@ function makeCard(c, isEnemy) {
   el.className = "bt-card " + (isEnemy ? "foe" : "ally") + (c.isBoss ? " boss" : "");
   el.style.setProperty("--ec", c.color);
   el.innerHTML = `
-    <div class="bt-art">${c.artHtml}</div>
+    <div class="bt-art">${renderArt({ kind: c.imgKind, id: c.imgId, costumeId: c.costumeId, rarity: c.rarity, fallback: c.artHtml, alt: c.name })}</div>
     <div class="bt-name">${c.name} <span class="bt-el">${c.element}</span></div>
     <div class="bar bt-hp"><div class="bar-fill" ></div></div>
     <div class="bt-hptext"></div>
@@ -201,7 +202,7 @@ function renderCommand(actor) {
   cmd.querySelectorAll("[data-skill]").forEach((b) =>
     b.addEventListener("click", () => beginTargeting(actor, actor.skills[Number(b.dataset.skill)])));
 }
-function effShort(e) { return { buff_atk: "攻↑", buff_def: "防↑", buff_spd: "速↑", debuff_atk: "敵攻↓", debuff_def: "敵防↓", debuff_spd: "敵速↓", heal: "回復", aoe: "全体", drain: "吸収", poison: "毒" }[e] || "—"; }
+function effShort(e) { return { buff_atk: "攻↑", buff_def: "防↑", buff_spd: "速↑", debuff_atk: "敵攻↓", debuff_def: "敵防↓", debuff_spd: "敵速↓", heal: "回復", aoe: "全体", drain: "吸収", poison: "毒", paralyze: "麻痺" }[e] || "—"; }
 
 function beginTargeting(actor, skill) {
   // 自己/味方対象（heal/buff）は即実行
@@ -362,6 +363,7 @@ function renderResult(r) {
   cmd.querySelector("#winNext").addEventListener("click", () => { _view = "select"; renderSelect(); });
 }
 function buildCaptureArt(species) {
-  // 封印された妖を species の素体で描画
-  return `<div style="width:80px;height:80px;margin:6px auto;">${buildYokaiArt({ speciesId: species.speciesId, level: 1, affection: 0, equip: { weaponUid: null, costumeUid: null } })}</div>`;
+  const inst = { speciesId: species.speciesId, level: 1, affection: 0, equip: { weaponUid: null, costumeUid: null } };
+  const art = renderArt({ kind: "yokai", id: species.speciesId, rarity: species.rarity, fallback: buildYokaiArt(inst), alt: species.name });
+  return `<div style="width:80px;height:80px;margin:6px auto;">${art}</div>`;
 }

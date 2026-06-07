@@ -121,11 +121,20 @@ export const MASTER = [
   // --- yokai (id = speciesId) ---
   { id: "mametanuki",  type: "yokai", rarity: "common", name: "豆狸",     speciesId: "mametanuki" },
   { id: "ittanmomen",  type: "yokai", rarity: "common", name: "一反木綿", speciesId: "ittanmomen" },
-  { id: "bakeneko",    type: "yokai", rarity: "rare",   name: "化け猫",   speciesId: "bakeneko" },
+  { id: "chochin_kozo",type: "yokai", rarity: "common", name: "提灯小僧", speciesId: "chochin_kozo" },
+  { id: "tofu_kozo",   type: "yokai", rarity: "common", name: "豆腐小僧", speciesId: "tofu_kozo" },
+  { id: "kappa",       type: "yokai", rarity: "common", name: "河童",     speciesId: "kappa" },
+  { id: "bakeneko",    type: "yokai", rarity: "epic",   name: "化け猫",   speciesId: "bakeneko" },
   { id: "karakasa",    type: "yokai", rarity: "rare",   name: "唐傘小僧", speciesId: "karakasa" },
+  { id: "amefurashi",  type: "yokai", rarity: "rare",   name: "雨ふらし", speciesId: "amefurashi" },
+  { id: "kamaitachi",  type: "yokai", rarity: "rare",   name: "鎌イタチ", speciesId: "kamaitachi" },
+  { id: "kasha",       type: "yokai", rarity: "rare",   name: "火車",     speciesId: "kasha" },
+  { id: "tsuchigumo",  type: "yokai", rarity: "rare",   name: "土蜘蛛",   speciesId: "tsuchigumo" },
   { id: "nue",         type: "yokai", rarity: "epic",   name: "鵺",       speciesId: "nue" },
   { id: "daitengu",    type: "yokai", rarity: "epic",   name: "大天狗",   speciesId: "daitengu" },
-  { id: "kyuubi",      type: "yokai", rarity: "mythic", name: "九尾の狐", speciesId: "kyuubi" },
+  { id: "oni",         type: "yokai", rarity: "epic",   name: "鬼",       speciesId: "oni" },
+  { id: "hakutaku",    type: "yokai", rarity: "epic",   name: "白沢",     speciesId: "hakutaku" },
+  { id: "kyuubi",      type: "yokai", rarity: "mythic", name: "金毛九尾", speciesId: "kyuubi" },
   { id: "orochi",      type: "yokai", rarity: "mythic", name: "八岐大蛇", speciesId: "orochi" },
 ];
 
@@ -183,14 +192,14 @@ export const ELEMENTS = {
    voices/lore は index 0=常時, 1..3=愛情段階で解放。 */
 export const YOKAI_SPECIES = [
   { speciesId: "mametanuki", name: "豆狸", rarity: "common", element: "地", form: "tanuki",
-    baseStats: { hp: 180, atk: 30, def: 26, spd: 30 }, growth: 0.08,
+    baseStats: { hp: 200, atk: 28, def: 30, spd: 26 }, growth: 0.08,  // 耐久寄り
     skills: [
-      { id: "tsuchikemuri", name: "土煙",   power: 14, element: "地", effect: "none" },
-      { id: "haratsuzumi",  name: "腹鼓",   power: 0,  element: "地", effect: "buff_def" },
+      { id: "hagakure",   name: "葉隠れ", power: 0,  element: "地", effect: "buff_def" },
+      { id: "taiatari",   name: "体当たり", power: 16, element: "地", effect: "none" },
     ],
-    voices: ["ぽんぽこ。", "腹が鳴ったぞ。", "お前といると安心するなあ。", "…ずっと、そばにいるよ。"],
+    voiceLines: ["ぽんぽこ♪", "腹が…減ったな。", "餅、半分こしようか。", "お前といると、満腹より安心するなあ。"],
     lore: ["のんびり屋の化け狸。", "化かすより餅が好き。", "満腹だと滅法強い。", "腹鼓は仲間の心も鎮める。"],
-    desc: "のんびり屋の化け狸。" },
+    desc: "のんびり食いしん坊の化け狸。" },
 
   { speciesId: "ittanmomen", name: "一反木綿", rarity: "common", element: "風", form: "cloth",
     baseStats: { hp: 160, atk: 32, def: 22, spd: 38 }, growth: 0.08,
@@ -202,15 +211,15 @@ export const YOKAI_SPECIES = [
     lore: ["夜空を舞う布の妖。", "風を読むのが得意。", "巻きつけば逃さない。", "包まれた者は安らかに眠る。"],
     desc: "夜空を舞う布の妖。" },
 
-  { speciesId: "bakeneko", name: "化け猫", rarity: "rare", element: "闇", form: "cat",
-    baseStats: { hp: 240, atk: 46, def: 34, spd: 44 }, growth: 0.10,
+  { speciesId: "bakeneko", name: "化け猫", rarity: "epic", element: "闇", form: "cat",
+    baseStats: { hp: 300, atk: 66, def: 46, spd: 58 }, growth: 0.12,  // 攻撃クリ寄り
     skills: [
-      { id: "tsumegiri", name: "爪斬り",   power: 20, element: "闇", effect: "none" },
-      { id: "nibinomai", name: "二尾の舞", power: 0,  element: "闇", effect: "buff_spd" },
+      { id: "youtsume", name: "妖爪", power: 24, element: "闇", effect: "none", critBonus: 0.25 }, // クリ高
+      { id: "noroi",    name: "呪い", power: 0,  element: "闇", effect: "debuff_atk" },
     ],
-    voices: ["にゃ。", "遊んでやろうか。", "撫でるなら、許す。", "…お前のそばが、一番だにゃ。"],
-    lore: ["二股の尾を持つ猫又。", "夜目が利く。", "気まぐれだが情に厚い。", "懐けば、夜通し喉を鳴らす。"],
-    desc: "二股の尾を持つ猫又。" },
+    voiceLines: ["にゃ…ふふ。", "遊んでやろうか、ほんの気まぐれに。", "撫でるなら、今だけ許す。", "…お前のそばが、一等いいにゃ。"],
+    lore: ["二股の尾を持つ猫又。", "夜目が利き、影に溶ける。", "妖艶で気まぐれ、だが情に厚い。", "懐けば、夜通し喉を鳴らす。"],
+    desc: "妖艶で気まぐれな猫又。" },
 
   { speciesId: "karakasa", name: "唐傘小僧", rarity: "rare", element: "水", form: "umbrella",
     baseStats: { hp: 220, atk: 42, def: 38, spd: 40 }, growth: 0.10,
@@ -244,16 +253,16 @@ export const YOKAI_SPECIES = [
     lore: ["山を統べる天狗の長。", "羽団扇で風を操る。", "誇り高く厳格。", "認めた者には極意を授ける。"],
     desc: "山を統べる天狗の長。" },
 
-  { speciesId: "kyuubi", name: "九尾の狐", rarity: "mythic", element: "火", form: "fox",
-    baseStats: { hp: 450, atk: 92, def: 70, spd: 76 }, growth: 0.14,
+  { speciesId: "kyuubi", name: "金毛九尾", rarity: "mythic", element: "火", form: "fox",
+    baseStats: { hp: 450, atk: 96, def: 68, spd: 78 }, growth: 0.14,  // 全体高火力
     skills: [
-      { id: "youkobi",   name: "妖狐火",   power: 70, element: "火", effect: "aoe" },
-      { id: "kyubiranbu",name: "九尾乱舞", power: 88, element: "火", effect: "none" },
-      { id: "miryo",     name: "魅了",     power: 0,  element: "火", effect: "debuff_atk" },
+      { id: "kitsunebiranbu", name: "狐火乱舞", power: 78, element: "火", effect: "aoe" },   // 全体大
+      { id: "kyubiranbu",     name: "九尾乱舞", power: 92, element: "火", effect: "none" },
+      { id: "miryo",          name: "魅了",     power: 0,  element: "火", effect: "paralyze" }, // 麻痺
     ],
-    voices: ["ふふ。", "永い時を生きた。", "お前は面白い。", "…千年の孤独を、お前が癒した。"],
-    lore: ["九つの尾を持つ大妖。", "国を傾けるとも言う。", "美しく、底知れぬ。", "ただ一人を、永く想い続ける。"],
-    desc: "九つの尾を持つ伝説の大妖。" },
+    voiceLines: ["…ふ。", "永い時を、生きた。", "人の子よ、面白いことを言う。", "…千年の孤独を、お前が癒した。"],
+    lore: ["金色の毛並みを持つ九尾の大妖。", "国を傾けるとも言う。", "荘厳にして、人を見下す。", "ただ一人を、永く想い続ける。"],
+    desc: "荘厳にして人を見下す、金毛の大妖。" },
 
   { speciesId: "orochi", name: "八岐大蛇", rarity: "mythic", element: "水", form: "serpent",
     baseStats: { hp: 520, atk: 86, def: 78, spd: 64 }, growth: 0.14,
@@ -265,6 +274,98 @@ export const YOKAI_SPECIES = [
     voices: ["……シャアア。", "酒を、寄越せ。", "我が八つの首、貴様を護ろう。", "…貴様だけは、呑まぬ。"],
     lore: ["八つの首を持つ大蛇。", "酒に酔わされた伝説を持つ。", "その身は山八つ分。", "気を許した者には八重の守りを。"],
     desc: "八つの首を持つ厄災の大蛇。" },
+
+  /* ---- 妖怪バッチ1（新規追加） ---- */
+  { speciesId: "chochin_kozo", name: "提灯小僧", rarity: "common", element: "火", form: "_default",
+    baseStats: { hp: 140, atk: 36, def: 18, spd: 34 }, growth: 0.08,  // 攻撃寄り低耐久
+    skills: [
+      { id: "hinoko", name: "火の粉", power: 16, element: "火", effect: "none" },
+    ],
+    voiceLines: ["ともしび、ともった！", "いたずら、しちゃおっと。", "ふふ、こっちだよ〜。", "…きみの夜は、ぼくが照らす。"],
+    lore: ["夜道に灯る提灯の妖。", "無邪気な悪戯が好き。", "灯を消すと拗ねる。", "本当は、暗がりが少し怖い。"],
+    desc: "無邪気な悪戯好きの提灯妖。" },
+
+  { speciesId: "amefurashi", name: "雨ふらし", rarity: "rare", element: "水", form: "cloth",
+    baseStats: { hp: 230, atk: 38, def: 36, spd: 36 }, growth: 0.10,  // 補助回復寄り
+    skills: [
+      { id: "jiu",        name: "慈雨",   power: 0,  element: "水", effect: "heal" },
+      { id: "mizudeppo2", name: "水鉄砲", power: 18, element: "水", effect: "none" },
+    ],
+    voiceLines: ["…しとしと。", "今日も、曇り空。", "濡れていく方が、楽なのです。", "…あなたの傘に、入れてくれますか。"],
+    lore: ["雨雲を連れて現れる妖。", "物憂げで口数が少ない。", "誰かの涙を雨に紛らす。", "晴れた日は、少しだけ笑う。"],
+    desc: "物憂げに雨を連れる妖。" },
+
+  { speciesId: "kamaitachi", name: "鎌イタチ", rarity: "rare", element: "風", form: "cat",
+    baseStats: { hp: 200, atk: 50, def: 28, spd: 58 }, growth: 0.10,  // 速さ先制寄り
+    skills: [
+      { id: "mikadukizan", name: "三日月斬り", power: 24, element: "風", effect: "none" }, // 先制（高速で実現）
+    ],
+    voiceLines: ["…用件は？", "遅い。話にならん。", "…まあ、悪くない速さだ。", "隣を走るのは、お前だけだ。"],
+    lore: ["旋風と共に駆ける鼬の妖。", "そっけない俊足。", "斬られても痛みは後から来る。", "認めた相手の歩幅に、合わせてくれる。"],
+    desc: "そっけない俊足の鎌鼬。" },
+
+  /* ---- 妖怪アセット同期バッチ（新規6体） ---- */
+  { speciesId: "tofu_kozo", name: "豆腐小僧", rarity: "common", element: "闇", form: "_default",
+    baseStats: { hp: 160, atk: 28, def: 24, spd: 26 }, growth: 0.08,
+    skills: [
+      { id: "noroidofu", name: "呪いの豆腐", power: 0,  element: "闇", effect: "debuff_def" },
+      { id: "butsukari",  name: "ぶつかり",   power: 14, element: "闇", effect: "none" },
+    ],
+    voiceLines: ["…お豆腐、いかが？", "ついて来ても、いい？", "ひとりは、さみしいんだ。", "…そばに居てくれて、ありがとう。"],
+    lore: ["盆に豆腐を載せた童の妖。", "おどおどして内気。", "雨の日に現れる。", "受け取ってくれた人を、ずっと慕う。"],
+    desc: "内気で寂しがりの童の妖。" },
+
+  { speciesId: "kappa", name: "河童", rarity: "common", element: "水", form: "_default",
+    baseStats: { hp: 205, atk: 30, def: 32, spd: 28 }, growth: 0.08,
+    skills: [
+      { id: "mizudeppo", name: "水鉄砲", power: 16, element: "水", effect: "none" },
+      { id: "saramamori", name: "皿守り", power: 0,  element: "水", effect: "buff_def" },
+    ],
+    voiceLines: ["きゅう！", "相撲、とろうぜ！", "きゅうりが好物さ。", "…皿の水、君になら見せてもいい。"],
+    lore: ["皿に水を湛えた川の妖。", "悪戯好きで相撲自慢。", "皿が乾くと力を失う。", "恩を受けると律儀に返す。"],
+    desc: "悪戯好きで律儀な川の妖。" },
+
+  { speciesId: "kasha", name: "火車", rarity: "rare", element: "火", form: "cat",
+    baseStats: { hp: 220, atk: 52, def: 34, spd: 48 }, growth: 0.10,
+    skills: [
+      { id: "kasharin", name: "火車輪", power: 26, element: "火", effect: "none" },
+      { id: "gouka",     name: "業火",   power: 20, element: "火", effect: "aoe" },
+    ],
+    voiceLines: ["…ニャアア。", "亡者は、よこせ。", "燃え残りはない。", "…お前の魂だけは、奪わぬ。"],
+    lore: ["火焔の車輪を駆る化け猫。", "亡骸をさらう獰猛な妖。", "雷雨の夜に現れる。", "情を交わした者には牙を向けない。"],
+    desc: "亡者をさらう火焔の化け猫。" },
+
+  { speciesId: "tsuchigumo", name: "土蜘蛛", rarity: "rare", element: "地", form: "chimera",
+    baseStats: { hp: 260, atk: 48, def: 42, spd: 34 }, growth: 0.10,
+    skills: [
+      { id: "itoshibari", name: "糸縛り", power: 0,  element: "地", effect: "debuff_spd" },
+      { id: "dokuga",     name: "毒牙",   power: 20, element: "地", effect: "poison" },
+    ],
+    voiceLines: ["…ジジ。", "巣にかかったな。", "古き地は、我のもの。", "…お前だけは、糸で護ろう。"],
+    lore: ["山中に巣くう蜘蛛の大妖。", "八つの眼で獲物を捉える。", "古い地の主を自称する。", "懐いた者を糸で優しく包む。"],
+    desc: "山に巣くう古き地の蜘蛛妖。" },
+
+  { speciesId: "oni", name: "鬼", rarity: "epic", element: "闇", form: "tengu",
+    baseStats: { hp: 340, atk: 74, def: 50, spd: 44 }, growth: 0.12,
+    skills: [
+      { id: "kanabou",  name: "金棒砕き", power: 40, element: "闇", effect: "none" },
+      { id: "houkou",   name: "鬼の咆哮", power: 0,  element: "闇", effect: "debuff_def" },
+      { id: "midaretsu",name: "乱れ突き", power: 30, element: "闇", effect: "none" },
+    ],
+    voiceLines: ["ぐおおお！", "酒だ、酒を持て！", "力比べといこうや！", "…お前は、よき呑み仲間だ。"],
+    lore: ["角と金棒を持つ荒ぶる妖。", "粗野で豪快、酒に目がない。", "力比べを好む。", "一度心を許せば、誰より頼もしい。"],
+    desc: "粗野で豪快な角の荒鬼。" },
+
+  { speciesId: "hakutaku", name: "白沢", rarity: "epic", element: "光", form: "_default",
+    baseStats: { hp: 320, atk: 60, def: 54, spd: 56 }, growth: 0.12,
+    skills: [
+      { id: "joukanohikari", name: "浄化の光", power: 0,  element: "光", effect: "heal" },
+      { id: "shintaku",      name: "神託",     power: 0,  element: "光", effect: "buff_atk" },
+      { id: "kouki",         name: "光輝",     power: 36, element: "光", effect: "none" },
+    ],
+    voiceLines: ["…案ずるな。", "災いの兆し、見えておる。", "万の事を、我は知る。", "…お前の行く末は、明るい。"],
+    lore: ["万物に通じる瑞獣・白沢。", "九つの眼と六本の角を持つ。", "災いを予見し人を導く。", "心を開いた者に、未来を語る。"],
+    desc: "災いを予見する博識の瑞獣。" },
 ];
 
 /* ============================================================
