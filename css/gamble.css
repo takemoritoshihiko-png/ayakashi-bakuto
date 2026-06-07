@@ -1,0 +1,577 @@
+/* gamble.css — 旧妖賭場の CSS を .gamble-root にスコープ（自動生成: build_gamble.cjs）*/
+/* ============================================================
+   妖賭場 (Ayakashi Casino) — コアループ最小構成
+   演出・音は次ステップ。CSSは1ブロックに集約。
+   ============================================================ */
+.gamble-root{
+  --bg:        #14101c;
+  --panel:     #1f1828;
+  --panel-2:   #2a2036;
+  --ink:       #efe7d8;
+  --ink-dim:   #9b8fa6;
+  --gold:      #e8c372;
+  --red:       #c8384a;
+  --red-deep:  #8f2230;
+  --blue:      #3b7dd8;
+  --blue-deep: #244e8f;
+  --line:      #3a2f48;
+}
+.gamble-root *{ box-sizing:border-box; margin:0; padding:0; }
+.gamble-root{
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+  background:radial-gradient(ellipse at 50% -10%, #2a1b34 0%, var(--bg) 60%);
+  color:var(--ink);
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.gamble-root .app{
+  position:relative;
+  isolation:isolate;          /* scene/veil を負のz-indexで内側に収める */
+  width:100%; max-width:440px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+/* --- 上部: 所持金 / 最深記録 --- */
+.gamble-root .topbar{
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:16px 20px;
+  background:var(--panel-2);
+  border-bottom:1px solid var(--line);
+}
+.gamble-root .topbar .label{ font-size:12px; color:var(--ink-dim); letter-spacing:.1em; }
+.gamble-root .topbar .val{ font-size:22px; color:var(--gold); font-weight:700; }
+.gamble-root .title{
+  text-align:center; padding:14px 0 4px;
+  font-size:26px; letter-spacing:.3em; color:var(--gold);
+}
+.gamble-root .subtitle{ text-align:center; font-size:11px; color:var(--ink-dim); letter-spacing:.4em; margin-bottom:6px; }
+
+/* --- 中央: 段 / 取り分 --- */
+.gamble-root .stage{
+  text-align:center; padding:22px 20px 8px;
+}
+.gamble-root .depth{ font-size:13px; color:var(--ink-dim); letter-spacing:.15em; }
+.gamble-root .depth b{ font-size:30px; color:var(--ink); }
+.gamble-root .pot{
+  margin-top:10px; font-size:15px; color:var(--ink-dim); letter-spacing:.1em;
+}
+.gamble-root .pot b{ font-size:44px; color:var(--gold); display:block; line-height:1.1; }
+
+/* --- 次段予告 (本作の肝) --- */
+.gamble-root .forecast{
+  margin:16px 20px;
+  padding:14px 16px;
+  background:var(--panel-2);
+  border:1px dashed var(--line);
+  border-radius:12px;
+  text-align:center;
+}
+.gamble-root .forecast .head{ font-size:11px; color:var(--ink-dim); letter-spacing:.2em; margin-bottom:8px; }
+.gamble-root .forecast .row{ display:flex; justify-content:space-around; }
+.gamble-root .forecast .item .k{ font-size:11px; color:var(--ink-dim); }
+.gamble-root .forecast .item .v{ font-size:24px; font-weight:700; }
+.gamble-root .forecast .mul .v{ color:var(--gold); }
+.gamble-root .forecast .bust .v{ color:var(--red); }
+
+/* --- ボタン --- */
+.gamble-root .actions{ display:flex; gap:12px; padding:4px 20px 12px; }
+.gamble-root .btn{
+  flex:1; padding:16px 0;
+  font-family:inherit; font-size:18px; font-weight:700; letter-spacing:.2em;
+  border:none; border-radius:12px; cursor:pointer; color:#fff;
+  transition:transform .05s, filter .15s;
+}
+.gamble-root .btn:active{ transform:translateY(2px); }
+.gamble-root .btn:disabled{ filter:grayscale(.6) brightness(.6); cursor:not-allowed; }
+.gamble-root .btn-dive{ background:linear-gradient(180deg,var(--red),var(--red-deep)); }
+.gamble-root .btn-flee{ background:linear-gradient(180deg,var(--blue),var(--blue-deep)); }
+
+/* --- 賭け金ボタン --- */
+.gamble-root .bets{ padding:4px 20px 16px; }
+.gamble-root .bets .head{ font-size:12px; color:var(--ink-dim); letter-spacing:.15em; margin-bottom:8px; text-align:center; }
+.gamble-root .bets .grid{ display:flex; gap:10px; }
+.gamble-root .btn-bet{
+  flex:1; padding:14px 0;
+  font-family:inherit; font-size:16px; font-weight:700;
+  background:var(--panel-2); color:var(--gold);
+  border:1px solid var(--gold); border-radius:10px; cursor:pointer;
+}
+.gamble-root .btn-bet:active{ transform:translateY(2px); }
+.gamble-root .btn-bet:disabled{ opacity:.3; cursor:not-allowed; border-color:var(--line); color:var(--ink-dim); }
+
+/* --- メッセージ欄 --- */
+.gamble-root .message{
+  padding:14px 20px;
+  min-height:52px;
+  text-align:center;
+  font-size:15px; letter-spacing:.05em;
+  border-top:1px solid var(--line);
+  background:var(--panel-2);
+  display:flex; align-items:center; justify-content:center;
+}
+.gamble-root .message.bust{ color:var(--red); }
+.gamble-root .message.win{ color:var(--gold); }
+.gamble-root .message.whisper{ color:var(--ink-dim); font-style:italic; }
+
+/* --- ゲームオーバー --- */
+.gamble-root .gameover{
+  text-align:center; padding:30px 20px;
+}
+.gamble-root .gameover h2{ color:var(--red); font-size:28px; letter-spacing:.2em; margin-bottom:8px; }
+.gamble-root .gameover p{ color:var(--ink-dim); margin-bottom:18px; }
+.gamble-root .hidden{ display:none !important; }
+
+/* ============================================================
+   FX — 第2指示：演出・音・ニアミス（ルールは変えない）
+   ============================================================ */
+
+/* ミュート切替（右上） */
+.gamble-root .mute{
+  position:absolute; top:12px; right:12px; z-index:30;
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--line); background:rgba(20,16,28,.7);
+  color:var(--ink); font-size:16px; cursor:pointer; line-height:1;
+}
+.gamble-root .mute:active{ transform:scale(.92); }
+
+/* 画面シェイク（.app へ付与し animationend で除去） */
+@keyframes shakeSmall{
+  0%,100%{ transform:translate(0,0); }
+  25%{ transform:translate(-2px,1px); }
+  50%{ transform:translate(2px,-1px); }
+  75%{ transform:translate(-1px,1px); }
+}
+@keyframes shakeBig{
+  0%,100%{ transform:translate(0,0) rotate(0); }
+  10%{ transform:translate(-9px,4px) rotate(-.6deg); }
+  25%{ transform:translate(10px,-5px) rotate(.7deg); }
+  40%{ transform:translate(-8px,6px) rotate(-.5deg); }
+  55%{ transform:translate(9px,-3px) rotate(.5deg); }
+  70%{ transform:translate(-6px,3px) rotate(-.3deg); }
+  85%{ transform:translate(4px,-2px); }
+}
+.gamble-root .app.shakeSmall{ animation:shakeSmall .22s ease; }
+.gamble-root .app.shakeBig{ animation:shakeBig .5s cubic-bezier(.36,.07,.19,.97); }
+
+/* フラッシュ・オーバーレイ（色付き発光を一瞬重ねる） */
+.gamble-root .flash{
+  position:absolute; inset:0; z-index:20; pointer-events:none; opacity:0;
+}
+@keyframes flGold{  0%{opacity:0} 12%{opacity:.85} 100%{opacity:0} }
+@keyframes flGreen{ 0%{opacity:0} 12%{opacity:.7}  100%{opacity:0} }
+@keyframes flRed{   0%{opacity:0} 8%{opacity:.95}  100%{opacity:0} }
+.gamble-root .flash.gold{  background:radial-gradient(ellipse at 50% 45%, rgba(232,195,114,.9), transparent 70%); animation:flGold .5s ease; }
+.gamble-root .flash.green{ background:radial-gradient(ellipse at 50% 45%, rgba(56,193,114,.8), transparent 70%);  animation:flGreen .5s ease; }
+.gamble-root .flash.red{   background:linear-gradient(0deg, rgba(200,56,74,.95), rgba(143,34,48,.6)); animation:flRed .55s ease; }
+.gamble-root .flash.near{  background:radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.95), rgba(232,195,114,.4) 60%, transparent 75%); animation:flGold .45s ease; }
+
+/* ヒビ割れ風（バスト時、放射状の白線を一瞬） */
+.gamble-root .flash.crack{
+  background:
+    repeating-conic-gradient(from 0deg at 50% 45%,
+      transparent 0deg 11deg, rgba(255,255,255,.5) 11deg 12deg);
+  animation:flRed .5s ease;
+}
+
+/* 「潜行中…」溜めオーバーレイ */
+.gamble-root .diving{
+  position:absolute; inset:0; z-index:25;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(8,5,14,.55); backdrop-filter:blur(1px);
+  transition:opacity .15s;
+}
+.gamble-root .diving.hidden{ display:none !important; }
+.gamble-root .diving-inner{
+  font-size:22px; letter-spacing:.4em; color:var(--ink);
+  text-shadow:0 0 14px rgba(0,0,0,.8);
+  animation:divePulse .5s ease-in-out infinite alternate;
+}
+@keyframes divePulse{ from{ opacity:.45; transform:translateY(0); } to{ opacity:1; transform:translateY(4px); } }
+
+/* pot のポップ（一瞬1.3倍） */
+@keyframes potPop{ 0%{transform:scale(1)} 35%{transform:scale(1.3)} 100%{transform:scale(1)} }
+.gamble-root .pot b.pop{ animation:potPop .35s ease; }
+.gamble-root .pot b.crash{ animation:potCrash .5s ease forwards; }
+@keyframes potCrash{ 0%{transform:scale(1);opacity:1} 100%{transform:scale(.6) translateY(10px);opacity:.25} }
+
+/* 心音：画面の縁が赤く脈打つ（box-shadow inset・--hb で周期可変） */
+@keyframes hbPulse{
+  0%,100%{ box-shadow:inset 0 0 0 rgba(200,56,74,0); }
+  45%{ box-shadow:inset 0 0 60px rgba(200,56,74,.55); }
+}
+.gamble-root .app.heartbeat{ animation:hbPulse var(--hb,1s) ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce){
+  .gamble-root .app.shakeSmall, .gamble-root .app.shakeBig, .gamble-root .app.heartbeat, .gamble-root .pot b.pop, .gamble-root .pot b.crash, .gamble-root .diving-inner{ animation:none; }
+}
+
+/* ============================================================
+   META（第3指示）: 二つ名 / 記録パネル / 賭場選択 / 新記録
+   ============================================================ */
+/* 新記録の専用フラッシュ（白金の閃光） */
+.gamble-root .flash.record{
+  background:radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.95), rgba(232,195,114,.5) 55%, transparent 78%);
+  animation:flGold .6s ease;
+}
+
+/* 二つ名バー（常時表示） */
+.gamble-root .metabar{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  flex-wrap:wrap; padding:2px 20px 12px;
+}
+.gamble-root .title-now{
+  font-size:15px; color:var(--gold); letter-spacing:.18em;
+  border:1px solid var(--gold); border-radius:999px; padding:3px 14px;
+}
+.gamble-root .title-next{ font-size:12px; color:var(--ink-dim); }
+.gamble-root .records-btn{
+  font-family:inherit; font-size:12px; color:var(--ink-dim);
+  background:none; border:1px solid var(--line); border-radius:8px;
+  padding:3px 10px; cursor:pointer;
+}
+.gamble-root .records-btn:active{ transform:translateY(1px); }
+
+/* 賭場選択（賭け前） */
+.gamble-root .casinos{ padding:4px 20px 8px; }
+.gamble-root .casinos .head{ font-size:12px; color:var(--ink-dim); letter-spacing:.15em; text-align:center; margin-bottom:8px; }
+.gamble-root .casino-row{ display:flex; gap:8px; }
+.gamble-root .casino{
+  flex:1; padding:10px 6px; border-radius:10px; cursor:pointer; text-align:center;
+  background:var(--panel-2); border:1px solid var(--line); color:var(--ink);
+  font-family:inherit; transition:border-color .15s, box-shadow .15s;
+}
+.gamble-root .casino:active{ transform:translateY(1px); }
+.gamble-root .casino.active{ border-color:var(--gold); box-shadow:inset 0 0 0 1px var(--gold); }
+.gamble-root .casino.locked{ opacity:.5; cursor:not-allowed; }
+.gamble-root .casino .cicon{ font-size:20px; line-height:1; }
+.gamble-root .casino .cname{ font-size:13px; font-weight:700; margin-top:3px; }
+.gamble-root .casino .cmeta{ font-size:10px; color:var(--ink-dim); margin-top:3px; }
+.gamble-root .casino .clock{ font-size:10px; color:var(--c-red,#c8384a); margin-top:3px; }
+
+/* 記録パネル（オーバーレイ） */
+.gamble-root .panel{
+  position:absolute; inset:0; z-index:40;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(8,5,14,.72);
+}
+.gamble-root .panel.hidden{ display:none !important; }
+.gamble-root .panel-card{
+  width:86%; max-width:340px;
+  background:var(--panel); border:1px solid var(--line); border-radius:14px;
+  padding:22px;
+}
+.gamble-root .panel-card h3{ color:var(--gold); text-align:center; letter-spacing:.2em; margin-bottom:6px; }
+.gamble-root .panel-card .sub{ text-align:center; color:var(--ink-dim); font-size:12px; margin-bottom:16px; }
+.gamble-root .panel-card dl{ display:grid; grid-template-columns:1fr auto; gap:10px 12px; font-size:14px; }
+.gamble-root .panel-card dt{ color:var(--ink-dim); }
+.gamble-root .panel-card dd{ color:var(--ink); text-align:right; font-weight:700; }
+.gamble-root .panel-card .close{
+  margin-top:18px; width:100%; padding:12px 0;
+  font-family:inherit; font-size:15px; font-weight:700; letter-spacing:.15em;
+  color:#fff; border:none; border-radius:10px; cursor:pointer;
+  background:linear-gradient(180deg,var(--blue),var(--blue-deep));
+}
+
+/* ゲームオーバーの「次の目標」強調 */
+.gamble-root .next-goal{
+  margin:6px auto 18px; padding:14px 16px; max-width:300px;
+  border:1px solid var(--gold); border-radius:12px; background:var(--panel-2);
+}
+.gamble-root .next-goal .ng-label{ font-size:11px; color:var(--ink-dim); letter-spacing:.15em; }
+.gamble-root .next-goal .ng-val{ font-size:24px; color:var(--gold); font-weight:700; margin-top:4px; }
+
+/* ============================================================
+   CHARMS / SHOP（第4指示）
+   ============================================================ */
+/* 装備お守りバー（常時表示） */
+.gamble-root .charmbar{ padding:0 16px 8px; }
+.gamble-root .charm-chips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; min-height:24px; }
+.gamble-root .charm-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:11px; padding:3px 9px; border-radius:999px;
+  background:var(--panel-2); border:1px solid var(--line); color:var(--ink);
+  border-left-width:3px;
+}
+.gamble-root .charm-chip .cdesc{ color:var(--ink-dim); }
+.gamble-root .charm-chip.empty{ color:var(--ink-dim); border-style:dashed; }
+.gamble-root .reso-badges{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:6px; }
+.gamble-root .reso-badge{
+  font-size:11px; padding:3px 10px; border-radius:6px; letter-spacing:.08em;
+  color:#1a1024; font-weight:700;
+  background:linear-gradient(90deg, var(--gold), var(--c-orange,#ff8c42));
+  box-shadow:0 0 10px rgba(232,195,114,.4);
+}
+
+/* ショップ/整理を開くボタン */
+.gamble-root .shop-actions{ display:flex; gap:10px; padding:0 20px 16px; }
+.gamble-root .ghost-btn{
+  flex:1; padding:11px 0; font-family:inherit; font-size:14px; font-weight:700; letter-spacing:.1em;
+  color:var(--gold); background:var(--panel-2); border:1px solid var(--gold);
+  border-radius:10px; cursor:pointer;
+}
+.gamble-root .ghost-btn:active{ transform:translateY(1px); }
+.gamble-root .ghost-btn:disabled{ opacity:.4; cursor:not-allowed; border-color:var(--line); color:var(--ink-dim); }
+
+/* ショップ提示カード */
+.gamble-root .shop-card{ max-width:380px; }
+.gamble-root .shop-offer{ display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.gamble-root .offer{
+  text-align:left; padding:12px 14px; border-radius:10px;
+  background:var(--panel-2); border:1px solid var(--line); border-left-width:4px;
+  cursor:pointer; transition:border-color .12s, box-shadow .12s;
+}
+.gamble-root .offer:active{ transform:translateY(1px); }
+.gamble-root .offer.cant{ opacity:.55; cursor:not-allowed; }
+.gamble-root .offer.bought{ opacity:.4; cursor:default; }
+.gamble-root .offer.synergy{ box-shadow:0 0 0 1px var(--gold), 0 0 14px rgba(232,195,114,.35); }
+.gamble-root .offer .o-top{ display:flex; align-items:center; gap:8px; }
+.gamble-root .offer .o-name{ font-size:15px; font-weight:700; color:var(--ink); }
+.gamble-root .offer .o-rar{ font-size:10px; padding:1px 7px; border-radius:5px; color:#1a1024; font-weight:700; }
+.gamble-root .offer .o-tags{ margin-left:auto; display:flex; gap:4px; }
+.gamble-root .offer .o-tag{ font-size:10px; padding:1px 6px; border-radius:4px; color:#fff; }
+.gamble-root .offer .o-desc{ font-size:12px; color:var(--ink-dim); margin-top:5px; }
+.gamble-root .offer .o-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+.gamble-root .offer .o-price{ font-size:14px; font-weight:700; color:var(--gold); }
+.gamble-root .offer .o-syn{ font-size:11px; color:var(--gold); }
+.gamble-root .shop-foot{ display:flex; gap:10px; }
+.gamble-root .close.inline{ flex:1; margin-top:0; }
+.gamble-root .ghost-btn#rerollBtn{ flex:1; }
+
+/* インベントリ（整理） */
+.gamble-root .inv-list{ display:flex; flex-direction:column; gap:8px; max-height:46vh; overflow-y:auto; }
+.gamble-root .inv-item{
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:9px;
+  background:var(--panel-2); border:1px solid var(--line); border-left-width:4px;
+}
+.gamble-root .inv-item .i-main{ flex:1; min-width:0; }
+.gamble-root .inv-item .i-name{ font-size:14px; font-weight:700; }
+.gamble-root .inv-item .i-desc{ font-size:11px; color:var(--ink-dim); }
+.gamble-root .inv-item .i-btn{
+  font-family:inherit; font-size:12px; font-weight:700; padding:7px 12px; border-radius:8px;
+  cursor:pointer; border:1px solid var(--line); background:var(--panel); color:var(--ink);
+}
+.gamble-root .inv-item .i-btn.on{ background:var(--gold); color:#1a1024; border-color:var(--gold); }
+.gamble-root .inv-item.empty{ color:var(--ink-dim); border-style:dashed; justify-content:center; }
+
+/* ============================================================
+   WORLD（第5指示）: 背景・妖・タイトル・賭場パレット
+   ============================================================ */
+/* 背景（賭場で切替）＋暗幕 */
+.gamble-root .scene{
+  position:absolute; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(120,90,160,.18), transparent 60%),
+    linear-gradient(180deg, #1a1326 0%, #14101c 55%, #0c0814 100%);
+  transition:background 1.2s ease;
+}
+.gamble-root .veil{
+  position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:0;
+  background:radial-gradient(ellipse at 50% 30%, transparent 30%, rgba(2,0,6,.85) 100%);
+  transition:opacity 1s ease;
+}
+/* 火の粉（安価に・上昇） */
+.gamble-root .ember{
+  position:absolute; bottom:-10px; width:3px; height:3px; border-radius:50%;
+  background:var(--ember,#e8a060); opacity:0; filter:blur(.4px);
+  animation:emberRise linear infinite;
+}
+.gamble-root .ember:nth-child(1){ left:14%; animation-duration:7s;  animation-delay:0s;   }
+.gamble-root .ember:nth-child(2){ left:30%; animation-duration:9s;  animation-delay:1.6s; }
+.gamble-root .ember:nth-child(3){ left:48%; animation-duration:6.2s;animation-delay:3.1s; }
+.gamble-root .ember:nth-child(4){ left:63%; animation-duration:8.4s;animation-delay:.7s;  }
+.gamble-root .ember:nth-child(5){ left:78%; animation-duration:7.6s;animation-delay:2.3s; }
+.gamble-root .ember:nth-child(6){ left:90%; animation-duration:10s; animation-delay:4s;   }
+@keyframes emberRise{
+  0%{ transform:translateY(0) scale(1); opacity:0; }
+  12%{ opacity:.8; }
+  80%{ opacity:.5; }
+  100%{ transform:translateY(-78vh) translateX(12px) scale(.4); opacity:0; }
+}
+
+/* 賭場ごとのパレット（背景・火の粉色・妖アクセント） */
+.gamble-root .app.casino-kitsune .scene{
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(230,120,80,.22), transparent 60%),
+    linear-gradient(180deg, #2a1418 0%, #1a0e16 55%, #0c0710 100%);
+}
+.gamble-root .app.casino-kitsune{ --ember:#ffb070; }
+.gamble-root .app.casino-oni .scene{
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(200,50,60,.26), transparent 60%),
+    linear-gradient(180deg, #2e0f12 0%, #1d0a0e 55%, #0d0506 100%);
+}
+.gamble-root .app.casino-oni{ --ember:#ff6048; }
+.gamble-root .app.casino-nekomata .scene{
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(80,160,150,.2), transparent 60%),
+    linear-gradient(180deg, #10201f 0%, #0c1718 55%, #060d0e 100%);
+}
+.gamble-root .app.casino-nekomata{ --ember:#7fe0c0; }
+
+/* 妖との対峙ステージ */
+.gamble-root .yokai-stage{
+  position:relative; text-align:center; padding:8px 20px 2px; min-height:140px;
+}
+.gamble-root .yokai-stage.hidden{ display:none !important; }
+.gamble-root .yokai-art{
+  width:128px; height:128px; margin:0 auto;
+  animation:yokaiFloat 4s ease-in-out infinite;
+  transform-origin:50% 80%;
+  will-change:transform, filter;
+}
+@keyframes yokaiFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.gamble-root .yokai-name{
+  font-size:12px; color:var(--ink-dim); letter-spacing:.3em; margin-top:2px;
+}
+.gamble-root .yokai-speech{
+  min-height:26px; margin:0 auto 4px; max-width:300px;
+  font-size:14px; color:var(--ink); letter-spacing:.04em;
+  opacity:0; transform:translateY(4px);
+}
+.gamble-root .yokai-speech.say{ animation:sayPop .4s ease forwards; }
+@keyframes sayPop{ 0%{opacity:0; transform:translateY(6px);} 100%{opacity:1; transform:translateY(0);} }
+
+/* SVG 内の眼の発光（深度で強まる） */
+.gamble-root .yokai-art .eye{ transition:fill .4s, filter .4s; }
+.gamble-root .yokai-art.mood-eager  .eye{ filter:drop-shadow(0 0 3px currentColor); }
+.gamble-root .yokai-art.mood-frenzy .eye{ filter:drop-shadow(0 0 7px currentColor); }
+
+/* 深度ムード：浅=静か / 中=前のめり / 深=高揚・歪み */
+.gamble-root .yokai-art.mood-eager{  animation:yokaiFloat 3s ease-in-out infinite; transform:scale(1.05); }
+.gamble-root .yokai-art.mood-frenzy{ animation:yokaiFrenzy .5s ease-in-out infinite; }
+@keyframes yokaiFrenzy{
+  0%,100%{ transform:scale(1.12) rotate(-1deg); }
+  25%{ transform:scale(1.14) rotate(1.2deg) translateX(2px); }
+  50%{ transform:scale(1.1) rotate(-1.4deg) translateX(-2px); }
+  75%{ transform:scale(1.15) rotate(.8deg); }
+}
+
+/* イベント反応（一発・~0.9s） */
+.gamble-root .yokai-art.react-survive{ animation:rSurvive .8s ease; }
+.gamble-root .yokai-art.react-near{    animation:rNear .8s ease; }
+.gamble-root .yokai-art.react-flee{    animation:rFlee 1s ease; }
+.gamble-root .yokai-art.react-bust{    animation:rBust .9s cubic-bezier(.36,.07,.19,.97); }
+.gamble-root .yokai-art.react-awe{     animation:rAwe 1.6s ease; }
+@keyframes rSurvive{ 0%,100%{transform:translateY(0)} 30%{transform:translateY(6px) scale(.97)} 60%{transform:translateY(-3px)} }
+@keyframes rNear{ 0%,100%{transform:rotate(0)} 30%{transform:rotate(5deg) scale(1.05)} 60%{transform:rotate(-3deg)} }
+@keyframes rFlee{ 0%{transform:translateX(0) rotate(0); opacity:1} 60%{transform:translateX(-14px) rotate(-10deg); opacity:.6} 100%{transform:translateX(0) rotate(0); opacity:1} }
+@keyframes rBust{ 0%,100%{transform:scale(1) rotate(0)} 15%{transform:scale(1.35) rotate(-6deg)} 35%{transform:scale(1.25) rotate(6deg)} 55%{transform:scale(1.3) rotate(-4deg)} 75%{transform:scale(1.2) rotate(3deg)} }
+@keyframes rAwe{ 0%{transform:scale(1)} 30%{transform:scale(1.18)} 60%{transform:translateY(10px) rotate(0) scale(1.05)} 100%{transform:translateY(0) scale(1)} }
+
+/* タイトル画面 */
+.gamble-root .titlescreen{
+  position:absolute; inset:0; z-index:50;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(120,80,150,.25), transparent 60%),
+    linear-gradient(180deg, #150b1e 0%, #0a0610 100%);
+}
+.gamble-root .titlescreen.hidden{ display:none !important; }
+.gamble-root .ts-inner{ text-align:center; padding:0 28px; }
+.gamble-root .ts-name{
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+  font-size:64px; font-weight:700; letter-spacing:.22em;
+  color:var(--gold);
+  text-shadow:0 0 18px rgba(232,195,114,.45), 0 4px 10px rgba(0,0,0,.6);
+  animation:tsGlow 4s ease-in-out infinite;
+}
+@keyframes tsGlow{ 0%,100%{ text-shadow:0 0 18px rgba(232,195,114,.4),0 4px 10px rgba(0,0,0,.6);} 50%{ text-shadow:0 0 30px rgba(232,195,114,.7),0 4px 10px rgba(0,0,0,.6);} }
+.gamble-root .ts-sub{ font-size:13px; color:var(--ink-dim); letter-spacing:.5em; margin-top:8px; }
+.gamble-root .ts-tag{ color:var(--ink); font-size:14px; line-height:2; margin:26px 0 30px; opacity:.85; }
+.gamble-root .ts-enter{
+  font-family:inherit; font-size:18px; font-weight:700; letter-spacing:.3em;
+  color:var(--ink); background:rgba(20,16,28,.6);
+  border:1px solid var(--gold); border-radius:12px;
+  padding:14px 40px; cursor:pointer;
+  box-shadow:0 0 20px rgba(232,195,114,.2);
+  transition:background .2s, box-shadow .2s;
+}
+.gamble-root .ts-enter:hover{ background:rgba(232,195,114,.15); box-shadow:0 0 28px rgba(232,195,114,.4); }
+.gamble-root .ts-enter:active{ transform:translateY(1px); }
+
+@media (prefers-reduced-motion: reduce){
+  .gamble-root .ember, .gamble-root .yokai-art, .gamble-root .yokai-art.mood-eager, .gamble-root .yokai-art.mood-frenzy, .gamble-root .yokai-art.react-survive, .gamble-root .yokai-art.react-near, .gamble-root .yokai-art.react-flee, .gamble-root .yokai-art.react-bust, .gamble-root .yokai-art.react-awe, .gamble-root .ts-name{ animation:none; }
+}
+
+/* ============================================================
+   DAILY / ACHIEVEMENTS / MYTHIC（第6指示）
+   ============================================================ */
+/* 神話レアの専用フラッシュ（最大級） */
+.gamble-root .flash.mythic{
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.98), rgba(255,94,219,.6) 45%, rgba(140,92,246,.3) 70%, transparent 82%);
+  animation:flGold .8s ease;
+}
+/* 神話お守りのチップ/カードは虹色縁 */
+.gamble-root .charm-chip.r-神話, .gamble-root .offer.r-神話, .gamble-root .inv-item.r-神話{
+  border-left-color:#ff5edb !important;
+  box-shadow:0 0 12px rgba(255,94,219,.4);
+}
+.gamble-root .offer .o-rar.r-神話{ background:linear-gradient(90deg,#ff5edb,#8b5cf6); color:#fff; }
+
+/* 今日の妖カード（賭け前） */
+.gamble-root .daily-card{
+  margin:0 20px 12px; padding:14px 16px; border-radius:12px;
+  background:linear-gradient(135deg, rgba(139,92,246,.18), rgba(20,16,28,.6));
+  border:1px solid #8b5cf6;
+}
+.gamble-root .daily-card .dc-head{ font-size:11px; color:#c8b3ff; letter-spacing:.2em; margin-bottom:6px; }
+.gamble-root .daily-card .dc-top{ display:flex; align-items:center; gap:10px; }
+.gamble-root .daily-card .dc-icon{ font-size:28px; }
+.gamble-root .daily-card .dc-name{ font-size:17px; font-weight:700; color:var(--ink); }
+.gamble-root .daily-card .dc-desc{ font-size:12px; color:var(--ink-dim); margin-top:4px; line-height:1.6; }
+.gamble-root .daily-card .dc-stats{ display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--ink-dim); margin-top:8px; }
+.gamble-root .daily-card .dc-stats b{ color:var(--gold); }
+.gamble-root .daily-card .dc-btn{
+  width:100%; margin-top:10px; padding:11px 0;
+  font-family:inherit; font-size:14px; font-weight:700; letter-spacing:.1em;
+  color:#fff; border:none; border-radius:9px; cursor:pointer;
+  background:linear-gradient(180deg,#8b5cf6,#5b3a9a);
+}
+.gamble-root .daily-card .dc-btn:active{ transform:translateY(1px); }
+.gamble-root .daily-card .dc-btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+/* ラウンド中の日替わりバナー */
+.gamble-root .daily-banner{
+  margin:0 20px 6px; padding:6px 12px; border-radius:8px; text-align:center;
+  font-size:12px; color:#e8d8ff; background:rgba(139,92,246,.22); border:1px solid #8b5cf6;
+}
+.gamble-root .daily-banner.hidden{ display:none !important; }
+
+/* タイトルの今日の妖 */
+.gamble-root .ts-daily{
+  margin:0 auto 22px; padding:10px 16px; max-width:300px; border-radius:10px;
+  background:rgba(139,92,246,.16); border:1px solid rgba(139,92,246,.6);
+  font-size:13px; color:#d8c8ff;
+}
+.gamble-root .ts-daily b{ color:#fff; }
+
+/* 天叢雲（神話・任意発動ボタン） */
+.gamble-root .ama-btn{
+  display:block; width:calc(100% - 40px); margin:0 20px 10px; padding:10px 0;
+  font-family:inherit; font-size:13px; font-weight:700; letter-spacing:.05em;
+  color:#1a1024; border:none; border-radius:10px; cursor:pointer;
+  background:linear-gradient(90deg,#fff,#ff5edb,#8b5cf6);
+  box-shadow:0 0 12px rgba(255,94,219,.4);
+}
+.gamble-root .ama-btn:active{ transform:translateY(1px); }
+.gamble-root .ama-btn.armed{ filter:brightness(1.1); outline:2px solid #fff; }
+.gamble-root .ama-btn.hidden{ display:none !important; }
+
+/* 実績アイテム */
+.gamble-root .achv-item{
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:9px;
+  background:var(--panel-2); border:1px solid var(--line);
+}
+.gamble-root .achv-item.locked{ opacity:.55; }
+.gamble-root .achv-item.done{ border-left:4px solid var(--gold); }
+.gamble-root .achv-item .a-ico{ font-size:18px; }
+.gamble-root .achv-item .a-name{ font-size:14px; font-weight:700; }
+.gamble-root .achv-item .a-desc{ font-size:11px; color:var(--ink-dim); }
+
+/* 継続コスト表示 */
+.gamble-root .continue-cost{ text-align:center; font-size:18px; color:var(--gold); font-weight:700; margin:10px 0 16px; }
