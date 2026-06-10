@@ -410,6 +410,31 @@ export const ENEMIES = {
   e_nue_boss: { id: "e_nue_boss", name: "鵺", element: "闇", art: "chimera", isBoss: true,
     stats: { hp: 600, atk: 64, def: 50, spd: 54 },
     skills: [{ name: "雷鳴", power: 48, element: "闇", effect: "none" }, { name: "鵺の声", power: 0, element: "闇", effect: "debuff_def" }, { name: "闇槍", power: 38, element: "闇", effect: "drain" }] },
+
+  // --- 追加：高難度の雑魚（s8/s9 用） ---
+  e_oodokuro: { id: "e_oodokuro", name: "大髑髏", element: "闇", art: "gashadokuro",
+    stats: { hp: 380, atk: 58, def: 42, spd: 32 },
+    skills: [{ name: "噛砕き", power: 38, element: "闇", effect: "none" }, { name: "呪詛", power: 0, element: "闇", effect: "poison" }] },
+  e_kasha: { id: "e_kasha", name: "火車", element: "火", art: "cat",
+    stats: { hp: 300, atk: 62, def: 36, spd: 52 },
+    skills: [{ name: "火車輪", power: 34, element: "火", effect: "none" }, { name: "業火", power: 26, element: "火", effect: "aoe" }] },
+  e_tsuchigumo: { id: "e_tsuchigumo", name: "土蜘蛛", element: "地", art: "chimera",
+    stats: { hp: 440, atk: 54, def: 52, spd: 28 },
+    skills: [{ name: "毒牙", power: 30, element: "地", effect: "poison" }, { name: "糸縛り", power: 0, element: "地", effect: "debuff_spd" }] },
+  e_kazekiri: { id: "e_kazekiri", name: "颪鼬", element: "風", art: "kamaitachi",
+    stats: { hp: 260, atk: 70, def: 32, spd: 64 },
+    skills: [{ name: "鎌嵐", power: 40, element: "風", effect: "none" }] },
+
+  // --- 追加：ボス（撃破で封印＝仲間化） ---
+  e_oni_boss: { id: "e_oni_boss", name: "大鬼", element: "闇", art: "chimera", isBoss: true,
+    stats: { hp: 820, atk: 84, def: 58, spd: 46 },
+    skills: [{ name: "金棒砕き", power: 50, element: "闇", effect: "none" }, { name: "鬼の咆哮", power: 0, element: "闇", effect: "debuff_def" }, { name: "乱れ突き", power: 40, element: "闇", effect: "none" }] },
+  e_tengu_boss: { id: "e_tengu_boss", name: "大天狗", element: "風", art: "kamaitachi", isBoss: true,
+    stats: { hp: 900, atk: 92, def: 60, spd: 70 },
+    skills: [{ name: "颶風斬", power: 54, element: "風", effect: "none" }, { name: "天狗風", power: 0, element: "風", effect: "buff_spd" }, { name: "疾風連撃", power: 44, element: "風", effect: "none" }] },
+  e_orochi_boss: { id: "e_orochi_boss", name: "八岐大蛇", element: "水", art: "chimera", isBoss: true,
+    stats: { hp: 1200, atk: 98, def: 74, spd: 58 },
+    skills: [{ name: "八塩折", power: 64, element: "水", effect: "none" }, { name: "大蛇の縛", power: 0, element: "水", effect: "debuff_spd" }, { name: "再生", power: 0, element: "水", effect: "heal" }] },
 };
 
 /** ステージ（前ステージのクリアで解放）。 */
@@ -422,6 +447,12 @@ const _STAGE_DEFS = [
   { id: "s5", name: "化け猫屋敷", enemyTeam: ["e_bakeneko_lord"], isBoss: true, bossCaptureSpeciesId: "bakeneko" },
   { id: "s6", name: "百鬼夜行", enemyTeam: ["e_gashadokuro", "e_onibi", "e_kappa"] },
   { id: "s7", name: "鵺の社", enemyTeam: ["e_nue_boss"], isBoss: true, bossCaptureSpeciesId: "nue" },
+  // ---- 追加ステージ（さらに深部・高難度） ----
+  { id: "s8",  name: "髑髏野", enemyTeam: ["e_kasha", "e_oodokuro"] },
+  { id: "s9",  name: "蜘蛛の窟", enemyTeam: ["e_tsuchigumo", "e_kazekiri"] },
+  { id: "s10", name: "鬼ヶ城", enemyTeam: ["e_oni_boss"], isBoss: true, bossCaptureSpeciesId: "oni" },
+  { id: "s11", name: "天狗の峰", enemyTeam: ["e_tengu_boss"], isBoss: true, bossCaptureSpeciesId: "daitengu" },
+  { id: "s12", name: "大蛇の淵", enemyTeam: ["e_orochi_boss"], isBoss: true, bossCaptureSpeciesId: "orochi" },
 ];
 export const STAGES = _STAGE_DEFS.map((s) => {
   const b = BALANCE.battle.stages[s.id] || {};

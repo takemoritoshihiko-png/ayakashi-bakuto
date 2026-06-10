@@ -13,20 +13,21 @@ export const BALANCE = {
   gamble: {
     startCoins: 1000,                  // 旧基準値（バランスの目安）
     bring: { starterStake: 1000, minBring: 100, presets: [1000, 5000] }, // 入場の持ち込み額
-    bustStep: 0.06,                    // 共通：1段ごとに増える破産確率
-    bustCap: 0.85,                     // 共通：破産確率の上限
-    mulBase: 1.4,                      // 共通：配当倍率の基数
+    // 蛇口を細く: リスク↑・配当↓で期待値を抑え、金がすぐ増えないように調整
+    bustStep: 0.09,                    // 共通：1段ごとに増える破産確率（0.06→0.09）
+    bustCap: 0.88,                     // 共通：破産確率の上限
+    mulBase: 1.26,                     // 共通：配当倍率の基数（1.4→1.26）
     casinos: [                         // 賭場別カーブ（bustBase=初段破産 / mulStep=1段ごとの配当増）
-      { id: "kitsune",  bustBase: 0.05, mulStep: 0.15 }, // 標準
-      { id: "oni",      bustBase: 0.10, mulStep: 0.28 }, // 高リスク高配当
-      { id: "nekomata", bustBase: 0.03, mulStep: 0.10 }, // 低リスク低配当
+      { id: "kitsune",  bustBase: 0.07, mulStep: 0.10 }, // 標準
+      { id: "oni",      bustBase: 0.13, mulStep: 0.20 }, // 高リスク高配当
+      { id: "nekomata", bustBase: 0.05, mulStep: 0.07 }, // 低リスク低配当
     ],
   },
 
   /* ===== ガチャ：coin の主要排出口 ===== */
   gacha: {
-    singleCost: 300,                   // 単発コスト(coin)
-    multiCost: 2700,                   // 10連コスト(coin)
+    singleCost: 800,                   // 単発コスト(coin)（300→800）
+    multiCost: 7200,                   // 10連コスト(coin)（2700→7200, 単発×9相当）
     multiCount: 10,                    // 連数
     multiGuarantee: "rare",            // 10連で確定する最低レア
     pityCeiling: 90,                   // この回数で神話確定→排出で0リセット
@@ -37,8 +38,8 @@ export const BALANCE = {
       epic:   { prob: 0.05, shard: 80 },
       mythic: { prob: 0.01, shard: 300 },
     },
-    exchangeCost: {                    // 交換所価格(shard)
-      ticket_rare: 60, grant_kitsunemen: 50, grant_bakeneko: 130,
+    exchangeCost: {                    // 交換所価格(shard)（引き上げ）
+      ticket_rare: 120, grant_kitsunemen: 100, grant_bakeneko: 260,
     },
   },
 
@@ -48,10 +49,10 @@ export const BALANCE = {
     partySize: 3,                      // 出撃編成数
     exp: { base: 50, pow: 1.5 },       // 次LvまでのEXP = floor(base × level^pow)
     tiers: [                           // 修行メニュー（baseCost=基本coin / exp=獲得 / affection=愛情+）
-      { id: "small", baseCost: 200, exp: 70,  affection: 2 },
-      { id: "hard",  baseCost: 900, exp: 360, affection: 5 },
+      { id: "small", baseCost: 500,  exp: 70,  affection: 2 },   // 200→500
+      { id: "hard",  baseCost: 2500, exp: 360, affection: 5 },   // 900→2500
     ],
-    costScale: 0.12,                   // 実コスト = baseCost × (1 + level × costScale)
+    costScale: 0.18,                   // 実コスト = baseCost × (1 + level × costScale)（0.12→0.18）
   },
 
   /* ===== 愛情度 ===== */
@@ -80,24 +81,30 @@ export const BALANCE = {
       s5: { coin: 1600, expBase: 320, dropTable: [{ itemId: "wp_raikiri", rate: 0.2 }], firstClearBonus: 2500 },
       s6: { coin: 2300, expBase: 460, dropTable: [{ itemId: "wp_saihai", rate: 0.2 }, { itemId: "cos_juni", rate: 0.15 }], firstClearBonus: 3000 },
       s7: { coin: 3500, expBase: 680, dropTable: [{ itemId: "wp_amahabari", rate: 0.12 }, { itemId: "cos_onitsuno", rate: 0.2 }], firstClearBonus: 5000 },
+      // ---- 追加ステージ（高難度・初回ボーナス厚め／周回coinは控えめ） ----
+      s8:  { coin: 2500, expBase: 900,  dropTable: [{ itemId: "wp_saihai", rate: 0.25 }, { itemId: "cos_juni", rate: 0.2 }], firstClearBonus: 6000 },
+      s9:  { coin: 3500, expBase: 1200, dropTable: [{ itemId: "wp_raikiri", rate: 0.22 }, { itemId: "cos_onitsuno", rate: 0.2 }], firstClearBonus: 8000 },
+      s10: { coin: 4500, expBase: 1600, dropTable: [{ itemId: "wp_futsu", rate: 0.14 }], firstClearBonus: 12000 },
+      s11: { coin: 6000, expBase: 2200, dropTable: [{ itemId: "cos_tsukuyomi", rate: 0.15 }, { itemId: "wp_amahabari", rate: 0.15 }], firstClearBonus: 16000 },
+      s12: { coin: 8000, expBase: 3200, dropTable: [{ itemId: "wp_amahabari", rate: 0.18 }, { itemId: "cos_kogane", rate: 0.14 }], firstClearBonus: 25000 },
     },
   },
 
   /* ===== 家具：coin のはけ口（癒し） ===== */
-  furniture: {                         // id -> { price:{coin|shard}, comfort }
-    f_tatami:   { price: { coin: 400 },  comfort: 8 },
-    f_rug:      { price: { coin: 300 },  comfort: 5 },
-    f_kakejiku: { price: { coin: 500 },  comfort: 7 },
-    f_kabe_mori:{ price: { coin: 600 },  comfort: 8 },
-    f_zabuton:  { price: { coin: 150 },  comfort: 4 },
-    f_chabudai: { price: { coin: 700 },  comfort: 9 },
-    f_tana:     { price: { coin: 550 },  comfort: 6 },
-    f_futon:    { price: { coin: 600 },  comfort: 10 },
-    f_bonsai:   { price: { coin: 450 },  comfort: 6 },
-    f_hanaike:  { price: { coin: 350 },  comfort: 5 },
-    f_andon:    { price: { coin: 400 },  comfort: 7 },
-    f_kamidana: { price: { coin: 2000 }, comfort: 16 },
-    f_onsen:    { price: { shard: 200 }, comfort: 24 },
+  furniture: {                         // id -> { price:{coin|shard}, comfort }（価格 約2.5倍）
+    f_tatami:   { price: { coin: 1000 }, comfort: 8 },
+    f_rug:      { price: { coin: 750 },  comfort: 5 },
+    f_kakejiku: { price: { coin: 1300 }, comfort: 7 },
+    f_kabe_mori:{ price: { coin: 1500 }, comfort: 8 },
+    f_zabuton:  { price: { coin: 400 },  comfort: 4 },
+    f_chabudai: { price: { coin: 1800 }, comfort: 9 },
+    f_tana:     { price: { coin: 1400 }, comfort: 6 },
+    f_futon:    { price: { coin: 1500 }, comfort: 10 },
+    f_bonsai:   { price: { coin: 1100 }, comfort: 6 },
+    f_hanaike:  { price: { coin: 900 },  comfort: 5 },
+    f_andon:    { price: { coin: 1000 }, comfort: 7 },
+    f_kamidana: { price: { coin: 6000 }, comfort: 16 },
+    f_onsen:    { price: { shard: 400 }, comfort: 24 },
   },
 
   /* ===== 放置：愛情度の自然増 ===== */
